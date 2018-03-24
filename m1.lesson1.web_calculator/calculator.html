@@ -6,78 +6,123 @@
     <meta name="author" content="Roy Nevo">
     <meta name="keywords" content="HTML,CSS,JavaScript">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--<meta http-equiv="refresh" content="5">-->
     <link rel="stylesheet" type="text/css" href="calculator_styles.css">
+
 </head>
 <body>
 <div>
-    <p >
-            <button class="operators" id="clear" onclick="resultsHandler('clear')">c</button>
+    <p class="inputHolder" >            
             <input type="number" id="input1" value="0">
-
     </p>
-    <p>
-        <button class="numbers" id="seven" onclick="numbersHandler('7')">7</button>
-        <button class="numbers" id="eight" onclick="numbersHandler('8')">8</button>
-        <button class="numbers" id="nine" onclick="numbersHandler('9')">9</button>
-        <button class="operators" id="divide" onclick="operatorsHandler('divide')">/</button>        
+    
+    <p class="buttonHolder">
+        <button class="numbers" id="seven" value="7" >7</button>
+        <button class="numbers" id="eight" value="8">8</button>
+        <button class="numbers" id="nine" value="9">9</button>
+        <button class="operators" id="divide" value="divide">/</button>        
     </p>
-    <p>
-            <button class="numbers" id="four" onclick="numbersHandler('4')">4</button>
-            <button class="numbers" id="five" onclick="numbersHandler('5')">5</button>
-            <button class="numbers" id="six" onclick="numbersHandler('6')">6</button>
-            <button class="operators" id="multiply" onclick="operatorsHandler('multiply')">*</button>                
+    
+    <p class="buttonHolder">
+            <button class="numbers" id="four"   value="4" >4</button>
+            <button class="numbers" id="five" value="5">5</button>
+            <button class="numbers" id="six" value="6">6</button>
+            <button class="operators" id="multiply" value="multiply">*</button>                
     </p>
-    <p>
-            <button class="numbers" id="one" onclick="numbersHandler('1')">1</button>
-            <button class="numbers" id="two" onclick="numbersHandler('2')">2</button>
-            <button class="numbers" id="three" onclick="numbersHandler('3')">3</button>
-            <button class="operators" id="subtract" onclick="operatorsHandler('subtract')">-</button>                
+    
+    <p class="buttonHolder">
+            <button class="numbers" id="one" value="1">1</button>
+            <button class="numbers" id="two" value="2">2</button>
+            <button class="numbers" id="three" value="3">3</button>
+            <button class="operators" id="subtract" value="subtract">-</button>                
     </p>
-    <p>
-            <button class="numbers" id="zero" onclick="numbersHandler('0')">0</button>
-            <!-- <button class="numbers" id="decPoint" onclick="numbersHandler('.')">.</button> -->
-            <button class="operators" id="equal" onclick="resultsHandler('equal')">=</button>
-            <button class="operators" id="add" onclick="operatorsHandler('add')">+</button>
-                       
+    
+    <p class="buttonHolder">
+            <button class="operators" id="clear" value="clear">c</button>
+            <button class="numbers" id="zero" value="0">0</button>            
+            <button class="operators" id="equal" value="equal">=</button>
+            <button class="operators" id="add" value="add">+</button>                      
     </p>
 </div>
 <script>
+    
+    var currButton = document.querySelectorAll("button");
+
+    Array.from(currButton).forEach(btn => {
+         btn.addEventListener('click',function(event){
+             if (btn.className == 'numbers'){
+                 numbersHandler(btn.value);
+             }
+             else {
+                 operatorsHandler(btn.value);
+             }
+         }
+         )});
+         
     let CurrentOperator = null;
-    let FirstNumber = '';
-    let SecondNumber = '';
-    let ResultNumber = '';
+    let FirstNumber = '0';    
+    let ResultNumber = '0';
+    let init = true;
+
     function numbersHandler(number){
-        if (document.getElementById('input1').value==0){
+        if (init){
             document.getElementById('input1').value=number;
+            init = false;
         }else{
         document.getElementById('input1').value+=number;
-        }
-        if (CurrentOperator==null)
-        {
-            ResultNumber+=number;
-        }
-    }
-    function operatorsHandler(operator){
+        }        
+        ResultNumber+=number;
         
+        
+    }
+    function operatorsHandler(operator){        
         document.getElementById('input1').value
-        alert(operator);
-    }
-    function resultsHandler(result){
-        if(result=='clear'){
+        if(operator=='clear'){
             document.getElementById('input1').value = 0;
-            FirstNumber = '';
-            SecondNumber = '';
-            ResultNumber = '';
-            CurrentOperator = null;       
-        } 
-        if (result=='equal'){
+            FirstNumber = '0';            
+            ResultNumber = '0';
+            CurrentOperator = null; 
+            init = true;      
+        } else 
+        if (operator=='equal'){
+            if (CurrentOperator == null){init = true;}
+            if (!(init)){
+            ResultNumber = getResult(FirstNumber,ResultNumber,CurrentOperator); 
             document.getElementById('input1').value=ResultNumber;
-            FirstNumber = '';
-            SecondNumber = '';
+            FirstNumber = '0';            
+            init = true;
             CurrentOperator = null;
-        }
+            } 
+            
+        } else
+        {
+            if (CurrentOperator == null)
+            {
+                FirstNumber = ResultNumber;
+                CurrentOperator = operator;
+                init = true;
+                ResultNumber = '';
+            } else{ 
+                init = false;
+                ResultNumber = getResult(FirstNumber,ResultNumber,CurrentOperator);              
+            }
+        }        
     }
+
+    function getResult(num1,num2,operator){
+        if (operator == 'add'){
+                    return (+num1 + +num2);
+                }
+                if (operator == 'subtract'){
+                    return (num1 - num2);
+                }
+                if (operator == 'multiply'){
+                    return (num1 * num2);
+                }
+                if (operator == 'divide') {
+                    return (num1 / num2);
+                }
+    }
+
 </script>
 </body>
 </html>
